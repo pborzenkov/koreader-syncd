@@ -1,0 +1,30 @@
+[package]
+name = "koreader-syncd"
+version = "0.1.0"
+authors = [
+  "Pavel Borzenkov <pavel@borzenkov.net>"
+]
+edition = "2021"
+description = "KOReader progress sync server"
+repository = "https://github.com/pborzenkov/koreader-syncd"
+license = "MIT"
+
+[dependencies]
+anyhow = "1"
+argon2 = "0"
+axum = { version = "0", features = ["json", "macros", "tokio"] }
+clap = { version = "4", features = ["cargo", "derive"] }
+clap-verbosity-flag = "2"
+log = "0"
+rand_core = { version = "0", features = ["getrandom"] }
+serde = { version = "1", features = ["derive", "std"] }
+sqlx = { version = "0", features = ["macros", "migrate", "runtime-tokio-rustls", "sqlite"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+tracing = "0"
+tracing-subscriber = { version = "0", features = ["fmt"] }
+
+[dev-dependencies]
+hyper = "0"
+mime = "0"
+serde_json = "1"
+tower = "0"
