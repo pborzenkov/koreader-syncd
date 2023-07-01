@@ -1,42 +1,41 @@
-name: ci
-
+name: CI
 on:
   pull_request:
   push:
     branches:
       - master
-
 jobs:
-  test:
-    name: test
+  tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout sources
+      - name: Check out
         uses: actions/checkout@v3
-
-      - name: Install toolchain
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Basic build
-        run: cargo build
-
-      - name: Run tests
-        run: cargo test
-  
-  lint:
-    name: lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v3
-
-      - name: Install toolchain
-        uses: dtolnay/rust-toolchain@stable
+      - name: Install nix
+        uses: DeterminateSystems/nix-installer-action@v4
+      - name: Install cachix
+        uses: cachix/cachix-action@v12
         with:
-          components: clippy,rustfmt
-
-      - name: Check formatting
-        run: cargo fmt --all -- --check
-  
-      - name: Run clippy
-        run: cargo clippy -- -D warnings
+          name: devenv
+      - name: Install devenv.sh
+        run: nix profile install --accept-flake-config github:cachix/devenv/latest
+      - name: Setup nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@v1
+      - name: Setup cargo cache
+        uses: actions/cache@v3
+        continue-on-error: false
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/ 
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
+      - name: Lint
+        run: |
+          devenv shell cargo fmt
+          devenv shell cargo clippy -- -D warnings
+      - name: Check
+        run: devenv shell cargo check
+      - name: Test
+        run: devenv shell cargo nextest run
