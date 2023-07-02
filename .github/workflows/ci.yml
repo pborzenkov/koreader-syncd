@@ -19,7 +19,7 @@ jobs:
       - name: Install devenv.sh
         run: nix profile install --accept-flake-config github:cachix/devenv/latest
       - name: Setup nix cache
-        uses: DeterminateSystems/magic-nix-cache-action@v1
+        uses: DeterminateSystems/magic-nix-cache-action@v2
       - name: Setup cargo cache
         uses: actions/cache@v3
         continue-on-error: false
@@ -31,11 +31,8 @@ jobs:
             target/ 
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-cargo-
-      - name: Lint
+      - name: Run pre-commit hooks
         run: |
-          devenv shell cargo fmt
-          devenv shell cargo clippy -- -D warnings
-      - name: Check
-        run: devenv shell cargo check
+          devenv shell pre-commit run --all-files
       - name: Test
         run: devenv shell cargo nextest run
