@@ -136,8 +136,6 @@ async fn register(
 ) -> Result<impl IntoResponse> {
     info!(user = input.username, "register");
 
-    let mut conn = pool.acquire().await.map_err(|_| Error::Internal)?;
-
     let salt = SaltString::generate(&mut OsRng);
     let argon2 = Argon2::default();
 
@@ -149,7 +147,7 @@ async fn register(
     sqlx::query(r#"INSERT INTO users (username, password) VALUES (?1, ?2)"#)
         .bind(&input.username)
         .bind(&password)
-        .execute(&mut conn)
+        .execute(&pool)
         .await
         .map_err(|e| match e {
             sqlx::Error::Database(de) if de.code().as_deref() == Some("1555") => Error::UserExists,
