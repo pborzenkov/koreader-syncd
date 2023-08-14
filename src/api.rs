@@ -69,10 +69,14 @@ impl IntoResponse for Error {
 
 type Result<T> = std::result::Result<T, Error>;
 
-pub fn get_router(pool: SqlitePool) -> Router {
-    Router::new()
-        .route("/users/create", post(register))
-        .merge(
+pub fn get_router(pool: SqlitePool, enable_register: bool) -> Router {
+    let router = if enable_register {
+        Router::new()
+            .route("/users/create", post(register))
+    } else {
+        Router::new()
+    };
+    router.merge(
             Router::new()
                 .route("/users/auth", get(check_authorized))
                 .route("/syncs/progress", put(put_progress))

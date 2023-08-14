@@ -26,7 +26,7 @@ async fn try_main() -> Result<()> {
 
     let pool = get_db_pool(&args.db).await?;
 
-    let app = api::get_router(pool);
+    let app = api::get_router(pool, args.enable_register);
 
     axum::Server::bind(&args.address)
         .serve(app.into_make_service())

@@ -11,6 +11,9 @@ pub struct Args {
     /// Database path
     #[clap(short, long)]
     pub db: PathBuf,
+    /// enable register
+    #[clap(short, long)]
+    pub enable_register: bool,
 
     #[clap(flatten)]
     pub verbose: Verbosity,
