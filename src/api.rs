@@ -71,12 +71,12 @@ type Result<T> = std::result::Result<T, Error>;
 
 pub fn get_router(pool: SqlitePool, enable_register: bool) -> Router {
     let router = if enable_register {
-        Router::new()
-            .route("/users/create", post(register))
+        Router::new().route("/users/create", post(register))
     } else {
         Router::new()
     };
-    router.merge(
+    router
+        .merge(
             Router::new()
                 .route("/users/auth", get(check_authorized))
                 .route("/syncs/progress", put(put_progress))
