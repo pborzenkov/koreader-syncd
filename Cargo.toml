@@ -19,7 +19,7 @@ log = "0.4"
 rand_core = { version = "0.6", features = ["getrandom"] }
 serde = { version = "1.0", features = ["derive", "std"] }
 sqlx = { version = "0.7", features = ["macros", "migrate", "runtime-tokio-rustls", "sqlite"] }
-tokio = { version = "1.29", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.32", features = ["macros", "rt-multi-thread"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["fmt"] }
 
