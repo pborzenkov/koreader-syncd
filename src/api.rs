@@ -405,7 +405,7 @@ mod tests {
 
     #[sqlx::test]
     async fn test_register(pool: SqlitePool) {
-        let app = get_router(pool);
+        let app = get_router(pool, true);
 
         for username in &vec!["username1", "username2"] {
             let response = run_req(app.clone(), create_user_req(username, "password")).await;
@@ -425,7 +425,7 @@ mod tests {
 
     #[sqlx::test]
     async fn test_check_auth(pool: SqlitePool) {
-        let app = get_router(pool);
+        let app = get_router(pool, true);
 
         let response = run_req(app.clone(), check_authorized_req("username", "password")).await;
         assert_eq!(response.status(), StatusCode::UNAUTHORIZED);
@@ -448,7 +448,7 @@ mod tests {
 
     #[sqlx::test]
     async fn test_sync_progress(pool: SqlitePool) {
-        let app = get_router(pool);
+        let app = get_router(pool, true);
 
         let _ = run_req(app.clone(), create_user_req("username", "password")).await;
 
