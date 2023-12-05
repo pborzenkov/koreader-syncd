@@ -5,6 +5,7 @@ use argon2::{
     Argon2,
 };
 use axum::{
+    body::Body,
     extract::{Path, State},
     http::{HeaderMap, Request, StatusCode},
     middleware::{self, Next},
@@ -86,11 +87,11 @@ pub fn get_router(pool: SqlitePool, enable_register: bool) -> Router {
         .with_state(pool)
 }
 
-async fn authorize<B>(
+async fn authorize(
     State(pool): State<SqlitePool>,
     headers: HeaderMap,
-    request: Request<B>,
-    next: Next<B>,
+    request: Request<Body>,
+    next: Next,
 ) -> Result<impl IntoResponse> {
     let (username, password) = (
         headers
@@ -329,6 +330,7 @@ mod tests {
         response::Response,
         Router,
     };
+    use http_body_util::BodyExt;
     use serde_json::{json, Value};
     use sqlx::SqlitePool;
     use tokio::time::sleep;
@@ -340,7 +342,7 @@ mod tests {
     }
 
     async fn assert_json(response: Response, json: Value) {
-        let body = hyper::body::to_bytes(response.into_body()).await.unwrap();
+        let body = response.into_body().collect().await.unwrap().to_bytes();
         let body: Value = serde_json::from_slice(&body).unwrap();
 
         assert_eq!(body, json);
@@ -476,7 +478,7 @@ mod tests {
         )
         .await;
         assert_eq!(response.status(), StatusCode::OK);
-        let body = hyper::body::to_bytes(response.into_body()).await.unwrap();
+        let body = response.into_body().collect().await.unwrap().to_bytes();
         let body: PutProgressResponse = serde_json::from_slice(&body).unwrap();
         assert_eq!(body.document, "document1");
         let ts1 = body.timestamp;
@@ -518,7 +520,7 @@ mod tests {
         )
         .await;
         assert_eq!(response.status(), StatusCode::OK);
-        let body = hyper::body::to_bytes(response.into_body()).await.unwrap();
+        let body = response.into_body().collect().await.unwrap().to_bytes();
         let body: PutProgressResponse = serde_json::from_slice(&body).unwrap();
         assert_eq!(body.document, "document1");
         let ts2 = body.timestamp;
