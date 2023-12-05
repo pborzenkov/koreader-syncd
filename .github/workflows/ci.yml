@@ -21,9 +21,11 @@ jobs:
         uses: DeterminateSystems/magic-nix-cache-action@v2
       - name: Setup rust cache
         uses: Swatinem/rust-cache@v2
-      - name: Run pre-commit hooks
-        run: |
-          devenv shell pre-commit run --all-files
-      - name: Test
-        run: |
-          devenv shell cargo nextest run
+      - name: cargo fmt
+        run: nix develop --command cargo fmt --check
+      - name: cargo check
+        run: nix develop --command cargo check
+      - name: cargo clippy
+        run: nix develop --command cargo clippy
+      - name: cargo nextest run
+        run: nix develop --command cargo nextest run
