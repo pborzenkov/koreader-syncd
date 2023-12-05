@@ -12,7 +12,7 @@ license = "MIT"
 [dependencies]
 anyhow = "1.0"
 argon2 = "0.5"
-axum = { version = "0.6", features = ["json", "macros", "tokio"] }
+axum = { version = "0.7", features = ["json", "macros", "tokio"] }
 clap = { version = "4.4", features = ["cargo", "derive"] }
 clap-verbosity-flag = "2.1"
 log = "0.4"
@@ -24,7 +24,8 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["fmt"] }
 
 [dev-dependencies]
-hyper = "0.14"
+hyper = "1.0"
+http-body-util = "0.1"
 mime = "0.3"
 serde_json = "1.0"
 tower = "0.4"

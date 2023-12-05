@@ -8,6 +8,7 @@ use sqlx::{
     sqlite::{SqliteConnectOptions, SqliteJournalMode},
     SqlitePool,
 };
+use tokio::net::TcpListener;
 
 mod api;
 mod args;
@@ -27,10 +28,9 @@ async fn try_main() -> Result<()> {
     let pool = get_db_pool(&args.db).await?;
 
     let app = api::get_router(pool, args.enable_register);
+    let listener = TcpListener::bind(&args.address).await?;
 
-    axum::Server::bind(&args.address)
-        .serve(app.into_make_service())
-        .await?;
+    axum::serve(listener, app).await?;
 
     Ok(())
 }
