@@ -11,7 +11,7 @@ jobs:
       - name: Check out
         uses: actions/checkout@v4
       - name: Install nix
-        uses: DeterminateSystems/nix-installer-action@v9
+        uses: DeterminateSystems/nix-installer-action@v10
       - uses: cachix/cachix-action@v14
         with:
           name: nix-community
