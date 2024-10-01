@@ -28,7 +28,7 @@ hyper = "1.1"
 http-body-util = "0.1"
 mime = "0.3"
 serde_json = "1.0"
-tower = "0.4"
+tower = "0.5"
 
 [lints.rust]
 warnings = "deny"
