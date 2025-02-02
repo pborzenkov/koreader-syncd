@@ -81,7 +81,7 @@ pub fn get_router(pool: SqlitePool, enable_register: bool) -> Router {
             Router::new()
                 .route("/users/auth", get(check_authorized))
                 .route("/syncs/progress", put(put_progress))
-                .route("/syncs/progress/:document", get(get_progress))
+                .route("/syncs/progress/{document}", get(get_progress))
                 .route_layer(middleware::from_fn_with_state(pool.clone(), authorize)),
         )
         .with_state(pool)
