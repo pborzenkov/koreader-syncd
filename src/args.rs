@@ -22,14 +22,7 @@ pub struct Args {
 impl Args {
     pub fn init_tracing(&self) {
         tracing_subscriber::fmt()
-            .with_max_level(match self.verbose.log_level_filter() {
-                log::LevelFilter::Off => tracing_subscriber::filter::LevelFilter::OFF,
-                log::LevelFilter::Error => tracing_subscriber::filter::LevelFilter::ERROR,
-                log::LevelFilter::Warn => tracing_subscriber::filter::LevelFilter::WARN,
-                log::LevelFilter::Info => tracing_subscriber::filter::LevelFilter::INFO,
-                log::LevelFilter::Debug => tracing_subscriber::filter::LevelFilter::DEBUG,
-                log::LevelFilter::Trace => tracing_subscriber::filter::LevelFilter::TRACE,
-            })
+            .with_max_level(self.verbose.tracing_level_filter())
             .init();
     }
 }
