@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Install nix
         uses: DeterminateSystems/nix-installer-action@v20
       - uses: cachix/cachix-action@v16
