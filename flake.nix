@@ -10,40 +10,45 @@
     };
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    fenix,
-    flake-utils,
-    ...
-  }:
-    flake-utils.lib.eachDefaultSystem (system: let
-      pkgs = import nixpkgs {inherit system;};
-      toolchain = fenix.packages.${system}.fromToolchainFile {
-        file = ./rust-toolchain.toml;
-        sha256 = "sha256-opUgs6ckUQCyDxcB9Wy51pqhd0MPGHUVbwRKKPGiwZU=";
-      };
-    in {
-      packages.default =
-        (pkgs.makeRustPlatform {
-          cargo = toolchain;
-          rustc = toolchain;
-        })
-        .buildRustPackage {
-          name = "koreader-syncd";
-          src = ./.;
-
-          cargoLock.lockFile = ./Cargo.lock;
+  outputs =
+    {
+      self,
+      nixpkgs,
+      fenix,
+      flake-utils,
+      ...
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = import nixpkgs { inherit system; };
+        toolchain = fenix.packages.${system}.fromToolchainFile {
+          file = ./rust-toolchain.toml;
+          sha256 = "sha256-AJ6LX/Q/Er9kS15bn9iflkUwcgYqRQxiOIL2ToVAXaU=";
         };
-      devShells.default = pkgs.mkShell {
-        inputsFrom = [
-          self.packages.${system}.default
-        ];
+      in
+      {
+        packages.default =
+          (pkgs.makeRustPlatform {
+            cargo = toolchain;
+            rustc = toolchain;
+          }).buildRustPackage
+            {
+              name = "koreader-syncd";
+              src = ./.;
 
-        buildInputs = [
-          pkgs.cargo-nextest
-          pkgs.rust-analyzer
-        ];
-      };
-    });
+              cargoLock.lockFile = ./Cargo.lock;
+            };
+        devShells.default = pkgs.mkShell {
+          inputsFrom = [
+            self.packages.${system}.default
+          ];
+
+          buildInputs = [
+            pkgs.cargo-nextest
+            pkgs.rust-analyzer
+          ];
+        };
+      }
+    );
 }
