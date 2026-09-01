@@ -1,7 +1,10 @@
 use std::time::SystemTime;
 
 use argon2::{
-    password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
+    password_hash::{
+        phc::{PasswordHash, SaltString},
+        PasswordHasher, PasswordVerifier,
+    },
     Argon2,
 };
 use axum::{
@@ -13,7 +16,6 @@ use axum::{
     routing::{get, post, put},
     Router,
 };
-use rand_core::OsRng;
 use serde::{Deserialize, Serialize};
 use sqlx::SqlitePool;
 use tracing::info;
@@ -141,11 +143,11 @@ async fn register(
 ) -> Result<impl IntoResponse> {
     info!(user = input.username, "register");
 
-    let salt = SaltString::generate(&mut OsRng);
+    let salt = SaltString::from_rng(&mut rand::rng());
     let argon2 = Argon2::default();
 
     let password = argon2
-        .hash_password(input.password.as_bytes(), &salt)
+        .hash_password_with_salt(input.password.as_bytes(), salt.as_bytes())
         .map_err(|_| Error::Internal)?
         .to_string();
 
@@ -409,7 +411,7 @@ mod tests {
     async fn test_register(pool: SqlitePool) {
         let app = get_router(pool, true);
 
-        for username in &vec!["username1", "username2"] {
+        for username in &["username1", "username2"] {
             let response = run_req(app.clone(), create_user_req(username, "password")).await;
             assert_eq!(response.status(), StatusCode::CREATED);
             assert_json(response, json!({ "username": username })).await;
