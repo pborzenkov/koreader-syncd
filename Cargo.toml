@@ -11,7 +11,7 @@ license = "MIT"
 
 [dependencies]
 anyhow = "1.0"
-argon2 = "0.5"
+argon2 = "0.6"
 axum = { version = "0.8", features = ["json", "macros", "tokio"] }
 clap = { version = "4.6", features = ["cargo", "derive"] }
 clap-verbosity-flag = { version = "3.0", default-features = false, features = ["tracing"] }
