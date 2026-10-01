@@ -11,7 +11,7 @@ jobs:
       - name: Check out
         uses: actions/checkout@v7
       - name: Install nix
-        uses: DeterminateSystems/nix-installer-action@v22
+        uses: DeterminateSystems/nix-installer-action@v23
       - uses: cachix/cachix-action@v17
         with:
           name: pborzenkov
